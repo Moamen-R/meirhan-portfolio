@@ -247,6 +247,21 @@ function ContactForm() {
 
   const isSending = status === "sending";
 
+  if (status === "success") {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-[2rem] border border-white/10 bg-white/[0.045] p-10 text-center backdrop-blur-xl sm:p-14">
+        <div className="animate-bounce-slow text-7xl sm:text-8xl">😊</div>
+        <h3 className="mt-6 font-display text-3xl font-bold text-palette-porcelain sm:text-4xl">
+          Thank you for contacting!
+        </h3>
+        <p className="mt-3 max-w-sm text-base leading-7 text-palette-powder/70">
+          Your message has been sent successfully. I'll get back to you soon!
+        </p>
+        <div className="mt-6 h-1 w-24 rounded-full bg-girly-gradient" />
+      </div>
+    );
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -325,9 +340,9 @@ function ContactForm() {
       {feedback ? (
         <p
           className={`mt-4 rounded-2xl border px-4 py-3 text-sm leading-6 ${
-            status === "success"
-              ? "border-blush-200/25 bg-blush-200/10 text-blush-100"
-              : "border-red-300/25 bg-red-400/10 text-red-100"
+            status === "error"
+              ? "border-red-300/25 bg-red-400/10 text-red-100"
+              : ""
           }`}
         >
           {feedback}
@@ -480,11 +495,14 @@ export default function App() {
       <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-palette-sage/55 backdrop-blur-2xl">
         <nav className="container mx-auto flex h-20 items-center justify-between px-5 sm:px-8">
           <a href="#home" className="group flex items-center gap-3">
-            <img
-              src="/MeirhanLogo.svg"
-              alt="Meirhan Logo"
-              className="h-10 w-10 transition-transform duration-300 group-hover:rotate-12"
-            />
+            <div className="relative">
+              <div className="absolute -inset-2 rounded-full bg-blush-200/20 blur-md transition-all duration-300 group-hover:bg-blush-200/40 group-hover:blur-lg" />
+              <img
+                src="/MeirhanLogo.svg"
+                alt="Meirhan Logo"
+                className="relative z-10 h-10 w-10 transition-transform duration-300 group-hover:rotate-12"
+              />
+            </div>
             <span className="font-display text-xl font-bold tracking-tight">
               Meirhan Lotfy
             </span>
