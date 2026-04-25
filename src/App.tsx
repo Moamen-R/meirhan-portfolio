@@ -18,6 +18,7 @@ import {
   Heart,
   LoaderCircle,
   Mail,
+  Menu,
   MessageCircle,
   Network,
   Send,
@@ -28,6 +29,7 @@ import {
   TerminalSquare,
   Wand2,
   Workflow,
+  X,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -352,6 +354,7 @@ function ContactForm() {
 
 export default function App() {
   const appRef = useRef<HTMLDivElement>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useLayoutEffect(() => {
     const reduceMotion = window.matchMedia(
@@ -477,9 +480,11 @@ export default function App() {
       <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-palette-sage/55 backdrop-blur-2xl">
         <nav className="container mx-auto flex h-20 items-center justify-between px-5 sm:px-8">
           <a href="#home" className="group flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-girly-gradient shadow-soft-pink transition-transform duration-300 group-hover:rotate-12">
-              <CheckCircle2 className="h-5 w-5 text-palette-porcelain" />
-            </span>
+            <img
+              src="/MeirhanLogo.svg"
+              alt="Meirhan Logo"
+              className="h-10 w-10 transition-transform duration-300 group-hover:rotate-12"
+            />
             <span className="font-display text-xl font-bold tracking-tight">
               Meirhan Lotfy
             </span>
@@ -497,13 +502,59 @@ export default function App() {
             ))}
           </div>
 
-          <Button asChild variant="glass" size="sm">
-            <a href="#contact">
-              <Mail className="h-4 w-4" />
-              Hire Me
-            </a>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              asChild
+              variant="glass"
+              size="sm"
+              className="hidden md:inline-flex"
+            >
+              <a href="#contact">
+                <Mail className="h-4 w-4" />
+                Hire Me
+              </a>
+            </Button>
+
+            <button
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-palette-porcelain transition hover:bg-white/[0.08] md:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </nav>
+
+        {isMobileMenuOpen && (
+          <div className="border-t border-white/10 bg-palette-sage/95 px-5 py-4 backdrop-blur-2xl md:hidden">
+            <div className="flex flex-col gap-2">
+              {navItems.map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="rounded-xl px-4 py-3 text-base font-medium text-palette-powder/80 transition hover:bg-white/[0.06] hover:text-palette-porcelain"
+                >
+                  {item}
+                </a>
+              ))}
+              <Button
+                asChild
+                variant="glam"
+                className="mt-2 w-full justify-center"
+              >
+                <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Mail className="h-4 w-4" />
+                  Hire Me
+                </a>
+              </Button>
+            </div>
+          </div>
+        )}
       </header>
 
       <main id="home">
@@ -831,9 +882,11 @@ export default function App() {
         <div className="container mx-auto grid gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr] lg:py-20">
           <div className="space-y-8">
             <a href="#home" className="group inline-flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-blush-200/20 bg-palette-porcelain text-palette-sage transition-transform duration-300 group-hover:rotate-6">
-                <CheckCircle2 className="h-5 w-5" />
-              </span>
+              <img
+                src="/MeirhanLogo.svg"
+                alt="Meirhan Logo"
+                className="h-11 w-11 transition-transform duration-300 group-hover:rotate-6"
+              />
               <span className="font-display text-2xl font-bold tracking-tight">
                 Meirhan Lotfy
               </span>
@@ -960,7 +1013,7 @@ export default function App() {
         </div>
 
         <div className="group bg-palette-petal px-4 pb-5 pt-6 sm:px-8 lg:pt-8">
-          <p className="flex select-none justify-center gap-[0.025em] text-center font-sans text-[clamp(5rem,16vw,18rem)] font-black uppercase leading-none text-[#080a09]">
+          <p className="flex select-none justify-center gap-[0.035em] text-center font-display text-[clamp(5rem,16vw,18rem)] font-bold uppercase leading-none text-[#080a09]">
             {"MEIRHAN".split("").map((letter, index) => (
               <span
                 key={`${letter}-${index}`}
