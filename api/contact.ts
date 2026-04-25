@@ -154,7 +154,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
                 <strong style="color:#f2eae7;">Name:</strong> ${safeName}
               </p>
               <p style="margin:0;color:#edd3d3;">
-                <strong style="color:#f2eae7;">Email:</strong> ${safeEmail}
+                <strong style="color:#f2eae7;">Email:</strong> <a href="mailto:${safeEmail}" style="color:#e8b3bc;text-decoration:underline;">${safeEmail}</a>
               </p>
             </div>
 

@@ -258,6 +258,15 @@ function ContactForm() {
           Your message has been sent successfully. I'll get back to you soon!
         </p>
         <div className="mt-6 h-1 w-24 rounded-full bg-girly-gradient" />
+        <Button
+          variant="glass"
+          size="lg"
+          className="mt-8"
+          onClick={() => { setStatus("idle"); setFeedback(""); }}
+        >
+          <Send className="h-4 w-4" />
+          Send another message
+        </Button>
       </div>
     );
   }
