@@ -1,0 +1,204 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 160 9% 13%;
+        --foreground: 18 29% 93%;
+
+        --card: 0 9% 31%;
+        --card-foreground: 18 29% 93%;
+
+        --popover: 0 9% 31%;
+        --popover-foreground: 18 29% 93%;
+
+        --primary: 346 62% 63%;
+        --primary-foreground: 18 29% 93%;
+
+        --secondary: 349 16% 38%;
+        --secondary-foreground: 356 36% 87%;
+
+        --muted: 0 9% 31%;
+        --muted-foreground: 353 28% 81%;
+
+        --accent: 346 40% 57%;
+        --accent-foreground: 18 29% 93%;
+
+        --destructive: 0 80% 60%;
+        --destructive-foreground: 18 29% 93%;
+
+        --border: 349 16% 38%;
+        --input: 349 16% 38%;
+        --ring: 346 62% 63%;
+
+        --radius: 1.25rem;
+    }
+
+    * {
+        @apply border-border;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        color-scheme: dark;
+    }
+
+    body {
+        @apply min-h-screen bg-background text-foreground antialiased;
+        font-feature-settings:
+            "rlig" 1,
+            "calt" 1;
+        background:
+            radial-gradient(
+                circle at 10% 0%,
+                rgba(219, 104, 130, 0.2),
+                transparent 34%
+            ),
+            radial-gradient(
+                circle at 88% 8%,
+                rgba(135, 88, 97, 0.22),
+                transparent 32%
+            ),
+            radial-gradient(
+                circle at 52% 100%,
+                rgba(232, 179, 188, 0.1),
+                transparent 36%
+            ),
+            linear-gradient(135deg, #1f2523 0%, #3a4642 48%, #574949 100%);
+        overflow-x: hidden;
+    }
+
+    ::selection {
+        background: rgba(219, 104, 130, 0.45);
+        color: #f2eae7;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #3a4642;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #db6882, #875861);
+        border: 2px solid #3a4642;
+        border-radius: 999px;
+    }
+}
+
+@layer components {
+    .glass-card {
+        @apply border border-white/10 bg-white/[0.045] shadow-soft-pink backdrop-blur-2xl;
+    }
+
+    .soft-card {
+        @apply rounded-3xl border border-white/10 bg-card/70 shadow-soft-pink backdrop-blur-xl;
+    }
+
+    .gradient-text {
+        @apply bg-girly-gradient bg-clip-text text-transparent;
+    }
+
+    .section-shell {
+        @apply container relative mx-auto px-5 py-20 sm:px-8 lg:py-28;
+    }
+
+    .eyebrow {
+        @apply inline-flex items-center gap-2 rounded-full border border-blush-300/20 bg-blush-300/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-blush-100;
+    }
+
+    .glow-orb {
+        @apply pointer-events-none absolute rounded-full blur-3xl;
+    }
+
+    .abstract-ring {
+        @apply pointer-events-none absolute rounded-full border border-blush-300/20;
+        box-shadow:
+            inset 0 0 60px rgba(219, 104, 130, 0.14),
+            0 0 80px rgba(161, 92, 110, 0.16);
+    }
+
+    .noise-overlay {
+        pointer-events: none;
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        opacity: 0.035;
+        mix-blend-mode: screen;
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.75) 1px, transparent 1px),
+            linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.75) 1px,
+                transparent 1px
+            );
+        background-size: 42px 42px;
+        mask-image: radial-gradient(circle at center, black, transparent 78%);
+    }
+
+    .magnetic-border {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .magnetic-border::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        z-index: -1;
+        border-radius: inherit;
+        background: linear-gradient(
+            135deg,
+            rgba(232, 179, 188, 0.7),
+            rgba(161, 92, 110, 0.5),
+            rgba(219, 104, 130, 0.72)
+        );
+        opacity: 0;
+        transition: opacity 300ms ease;
+    }
+
+    .magnetic-border:hover::before {
+        opacity: 1;
+    }
+
+    .shimmer-line {
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(232, 179, 188, 0.55),
+            rgba(219, 104, 130, 0.55),
+            transparent
+        );
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    .text-pretty {
+        text-wrap: pretty;
+    }
+
+    .mask-fade-bottom {
+        mask-image: linear-gradient(to bottom, black 72%, transparent 100%);
+    }
+
+    .mask-fade-x {
+        mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 16%,
+            black 84%,
+            transparent
+        );
+    }
+}
