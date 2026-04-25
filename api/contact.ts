@@ -1,16 +1,21 @@
 import { Resend } from "resend";
+import { z } from "zod";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
-type ContactRequestBody = {
-  name?: unknown;
-  email?: unknown;
-  subject?: unknown;
-  message?: unknown;
-  company?: unknown;
-};
+// Define Zod schema for input validation
+const ContactSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200).trim(),
+  email: z.string().email("Please provide a valid email address").max(200).trim(),
+  subject: z.string().max(200).trim().optional().default("New portfolio contact"),
+  message: z.string().min(1, "Message is required").max(5000).trim(),
+  company: z.string().max(200).trim().optional(),
+});
 
 type ApiRequest = {
   method?: string;
-  body?: ContactRequestBody | string;
+  body?: unknown;
+  headers?: Record<string, string | string[] | undefined>;
 };
 
 type ApiResponse = {
@@ -18,22 +23,6 @@ type ApiResponse = {
   json: (body: unknown) => void;
   setHeader: (name: string, value: string | string[]) => void;
 };
-
-const MAX_FIELD_LENGTH = 200;
-const MAX_MESSAGE_LENGTH = 5_000;
-
-function isString(value: unknown): value is string {
-  return typeof value === "string";
-}
-
-function cleanField(value: unknown, maxLength = MAX_FIELD_LENGTH) {
-  if (!isString(value)) return "";
-  return value.trim().slice(0, maxLength);
-}
-
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
 
 function escapeHtml(value: string) {
   return value
@@ -44,19 +33,26 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#039;");
 }
 
-function parseBody(body: ApiRequest["body"]): ContactRequestBody {
-  if (!body) return {};
-
+function parseBody(body: unknown) {
   if (typeof body === "string") {
     try {
-      return JSON.parse(body) as ContactRequestBody;
+      return JSON.parse(body);
     } catch {
       return {};
     }
   }
-
-  return body;
+  return body || {};
 }
+
+// Create a new ratelimiter that allows 3 requests per 15 minutes
+const ratelimit =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(3, "15 m"),
+        analytics: false,
+      })
+    : null;
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -73,6 +69,20 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     });
   }
 
+  // Rate Limiting
+  if (ratelimit) {
+    const ipHeader = req.headers?.["x-forwarded-for"] || req.headers?.["x-real-ip"] || "127.0.0.1";
+    const ip = Array.isArray(ipHeader) ? ipHeader[0] : ipHeader;
+    const { success } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return res.status(429).json({
+        ok: false,
+        message: "Too many requests. Please try again later.",
+      });
+    }
+  }
+
   const resendApiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.RESEND_TO_EMAIL;
   const fromEmail =
@@ -86,14 +96,20 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     });
   }
 
-  const body = parseBody(req.body);
+  const rawBody = parseBody(req.body);
+  const validationResult = ContactSchema.safeParse(rawBody);
 
-  const name = cleanField(body.name);
-  const email = cleanField(body.email);
-  const subject = cleanField(body.subject) || "New portfolio contact";
-  const message = cleanField(body.message, MAX_MESSAGE_LENGTH);
-  const company = cleanField(body.company);
+  if (!validationResult.success) {
+    const firstError = validationResult.error.errors[0]?.message || "Invalid input data";
+    return res.status(400).json({
+      ok: false,
+      message: firstError,
+    });
+  }
 
+  const { name, email, subject, message, company } = validationResult.data;
+
+  // Honeypot check for spam bots
   if (company) {
     return res.status(200).json({
       ok: true,
@@ -101,25 +117,11 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     });
   }
 
-  if (!name || !email || !message) {
-    return res.status(400).json({
-      ok: false,
-      message: "Please provide your name, email, and message.",
-    });
-  }
-
-  if (!isValidEmail(email)) {
-    return res.status(400).json({
-      ok: false,
-      message: "Please provide a valid email address.",
-    });
-  }
-
   const resend = new Resend(resendApiKey);
 
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
-  const safeSubject = escapeHtml(subject);
+  const safeSubject = escapeHtml(subject || "New portfolio contact");
   const safeMessage = escapeHtml(message).replaceAll("\n", "<br />");
 
   try {
@@ -127,11 +129,11 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       from: fromEmail,
       to: [toEmail],
       replyTo: email,
-      subject: `Portfolio Contact: ${subject}`,
+      subject: `Portfolio Contact: ${safeSubject}`,
       text: [
         `Name: ${name}`,
         `Email: ${email}`,
-        `Subject: ${subject}`,
+        `Subject: ${safeSubject}`,
         "",
         "Message:",
         message,
