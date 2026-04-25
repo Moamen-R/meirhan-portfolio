@@ -177,6 +177,25 @@
         background-size: 200% 100%;
         animation: shimmer 3s linear infinite;
     }
+
+    .marquee-track {
+        animation: seamless-marquee 58s linear infinite;
+        will-change: transform;
+    }
+
+    .marquee-track:hover {
+        animation-play-state: paused;
+    }
+
+    @keyframes seamless-marquee {
+        from {
+            transform: translate3d(0, 0, 0);
+        }
+
+        to {
+            transform: translate3d(-50%, 0, 0);
+        }
+    }
 }
 
 @layer utilities {

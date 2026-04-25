@@ -147,6 +147,8 @@ const toolStack = [
   "Lighthouse",
 ];
 
+const marqueeTools = Array.from({ length: 4 }, () => toolStack).flat();
+
 function FloatingShape({
   className,
   delay = 0,
@@ -454,13 +456,6 @@ export default function App() {
           },
         });
       });
-
-      gsap.to(".marquee-track", {
-        xPercent: -50,
-        duration: 18,
-        repeat: -1,
-        ease: "none",
-      });
     }, appRef);
 
     return () => ctx.revert();
@@ -709,15 +704,23 @@ export default function App() {
         </section>
 
         <section className="relative overflow-hidden border-y border-white/10 bg-white/[0.035] py-8">
-          <div className="marquee-track flex w-max gap-3">
-            {[...toolStack, ...toolStack].map((tool, index) => (
-              <Badge
-                key={`${tool}-${index}`}
-                variant="outline"
-                className="mx-1 px-5 py-2 text-sm text-palette-powder"
+          <div className="marquee-track flex w-max">
+            {[0, 1].map((group) => (
+              <div
+                key={group}
+                className="flex shrink-0 items-center gap-3 pr-3"
+                aria-hidden={group === 1}
               >
-                {tool}
-              </Badge>
+                {marqueeTools.map((tool, index) => (
+                  <Badge
+                    key={`${tool}-${group}-${index}`}
+                    variant="outline"
+                    className="mx-1 px-5 py-2 text-sm text-palette-powder"
+                  >
+                    {tool}
+                  </Badge>
+                ))}
+              </div>
             ))}
           </div>
         </section>
