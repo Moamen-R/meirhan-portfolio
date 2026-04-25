@@ -956,9 +956,17 @@ export default function App() {
           </a>
         </div>
 
-        <div className="bg-palette-petal px-3 pb-3 pt-4 sm:px-6 lg:pt-6">
-          <p className="select-none text-center font-sans text-[19vw] font-black uppercase leading-[0.75] tracking-[-0.12em] text-[#080a09] sm:text-[18vw]">
-            MEIRHAN
+        <div className="group bg-palette-petal px-4 pb-5 pt-6 sm:px-8 lg:pt-8">
+          <p className="flex select-none justify-center gap-[0.025em] text-center font-sans text-[clamp(5rem,16vw,18rem)] font-black uppercase leading-none text-[#080a09]">
+            {"MEIRHAN".split("").map((letter, index) => (
+              <span
+                key={`${letter}-${index}`}
+                className="inline-block transition duration-500 ease-out group-hover:-translate-y-3 group-hover:rotate-[-2deg] group-hover:scale-105"
+                style={{ transitionDelay: `${index * 45}ms` }}
+              >
+                {letter}
+              </span>
+            ))}
           </p>
         </div>
       </footer>

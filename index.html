@@ -13,5 +13,17 @@
     <body>
         <div id="root"></div>
         <script type="module" src="/src/main.tsx"></script>
+        <script>
+            if (
+                window.matchMedia("(min-width: 1024px)").matches &&
+                window.matchMedia("(pointer: fine)").matches
+            ) {
+                const onekoScript = document.createElement("script");
+                onekoScript.src = "/oneko.js";
+                onekoScript.dataset.cat = "/oneko.gif";
+                onekoScript.dataset.persistPosition = "false";
+                document.body.appendChild(onekoScript);
+            }
+        </script>
     </body>
 </html>
