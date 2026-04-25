@@ -30,6 +30,7 @@ import {
   Wand2,
   Workflow,
   X,
+  MessageSquare,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -47,7 +48,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 type IconType = ElementType;
 
-const navItems = ["About", "Skills", "Projects", "Process", "Contact"];
+const navItems = ["About", "Skills", "Projects", "Process", "Testimonials", "Contact"];
 
 const qualityStats = [
   { value: "98%", label: "Regression confidence" },
@@ -134,6 +135,27 @@ const processSteps = [
     title: "Report",
     text: "Share crisp evidence, practical recommendations, and release-ready quality signals.",
   },
+];
+
+const testimonials = [
+  {
+    quote: "Meirhan has an incredible eye for detail. Her bug reports are always clear, actionable, and prioritize the user experience.",
+    author: "Sarah Jenkins",
+    role: "Product Manager",
+    company: "Velvet",
+  },
+  {
+    quote: "Working with Meirhan transformed our release process. The automated API checks she built gave us complete confidence.",
+    author: "David Chen",
+    role: "Lead Engineer",
+    company: "Blush",
+  },
+  {
+    quote: "Quality isn't just an afterthought with Meirhan—she builds it into the culture. Our UI components have never been more reliable.",
+    author: "Emily Torres",
+    role: "Design Systems Lead",
+    company: "Sage",
+  }
 ];
 
 const toolStack = [
@@ -878,6 +900,47 @@ export default function App() {
           </div>
         </section>
 
+        <section id="testimonials" className="section-shell">
+          <SectionHeading
+            eyebrow="Testimonials"
+            title="What teams say about working together."
+            description="Quality is a collaborative effort. Here's how my testing approach has impacted product teams."
+          />
+
+          <div className="stagger-group grid gap-6 lg:grid-cols-3">
+            {testimonials.map((testimonial, i) => (
+              <Card
+                key={i}
+                className="stagger-item flex flex-col rounded-[2rem] bg-palette-cocoa/50 transition duration-300 hover:-translate-y-2 hover:shadow-glow"
+              >
+                <CardHeader>
+                  <div className="mb-4 text-blush-200">
+                    <MessageSquare className="h-8 w-8 opacity-50" />
+                  </div>
+                  <CardDescription className="text-base italic leading-8 text-palette-powder/80">
+                    "{testimonial.quote}"
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="mt-auto pt-6">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sm font-bold uppercase text-blush-200">
+                      {testimonial.author.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-palette-porcelain">
+                        {testimonial.author}
+                      </div>
+                      <div className="text-xs text-palette-powder/60">
+                        {testimonial.role}, {testimonial.company}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
         <section id="contact" className="section-shell pb-28">
           <div className="reveal relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-palette-cocoa/55 p-8 shadow-glow backdrop-blur-2xl sm:p-12 lg:p-16">
             <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-palette-petal/20 blur-3xl" />
@@ -958,7 +1021,7 @@ export default function App() {
               Portfolio
             </h3>
             <ul className="space-y-3 text-sm font-semibold">
-              {["About", "Skills", "Projects", "Process"].map((item) => (
+              {["About", "Skills", "Projects", "Process", "Testimonials"].map((item) => (
                 <li key={item}>
                   <a
                     href={`#${item.toLowerCase()}`}
